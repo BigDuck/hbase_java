@@ -6,17 +6,20 @@
 
 package com.wpj.hbase.Reponstity;
 
+import com.wpj.hbase.daomain.PageHBase;
 import com.wpj.hbase.daomain.Student;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.client.HTableInterface;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
 import org.springframework.data.hadoop.hbase.RowMapper;
 import org.springframework.data.hadoop.hbase.TableCallback;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Name：StudentReponsity
@@ -56,5 +59,6 @@ public class StudentReponsity {
         });
 
     }
+
 }
 

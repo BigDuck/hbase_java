@@ -2,6 +2,7 @@ package com.wpj.hbase;
 
 
 import com.wpj.hbase.Reponstity.StudentReponsity;
+import com.wpj.hbase.daomain.PageHBase;
 import com.wpj.hbase.daomain.PageModel;
 import com.wpj.hbase.daomain.Student;
 import org.apache.hadoop.conf.Configuration;
@@ -14,6 +15,7 @@ import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.data.hadoop.hbase.HbaseTemplate;
 import org.springframework.data.hadoop.hbase.RowMapper;
+import org.springframework.data.hadoop.hbase.TableCallback;
 
 import java.io.IOException;
 import java.util.*;
@@ -56,8 +58,11 @@ public class App {
 
         // QueryAll(TABLE_NAME);
         // QueryByCondition1(TB_COMPANY);
-       // findAll(TABLE_NAME);
-        findSome(TABLE_NAME);
+        // findAll(TABLE_NAME);
+//        findSome(TABLE_NAME);
+        //执行了删除
+//         boolean res=  execute(TABLE_NAME);
+//        System.out.println("---wpjlovehome@gmail.com-----res值=" + res + "," + "App.main()");
     }
 
     public static void test() {
@@ -307,25 +312,72 @@ public class App {
     public static void findAll(String tableName) {
         hbaseTemplate.find(tableName, "address", new RowMapper<Student>() {
             public Student mapRow(Result result, int rowNum) throws Exception {
-                System.out.println("---wpjlovehome@gmail.com-----值=" +  toStr( result.getValue(Bytes.toBytes("name"), null)) + "," + "App.mapRow()");
-
+                System.out.println("---wpjlovehome@gmail.com-----值=" + toStr(result.getValue(Bytes.toBytes("name"), null)) + "," + "App.mapRow()");
                 System.out.println(toStr(result.getValue(Bytes.toBytes("address"), Bytes.toBytes("home"))));
                 System.out.println(toStr(result.getValue(Bytes.toBytes("address"), Bytes.toBytes("school"))));
                 return null;
             }
         });
     }
+
     public static void findSome(String tableName) {
         hbaseTemplate.find(tableName, "address", new RowMapper<Student>() {
             public Student mapRow(Result result, int rowNum) throws Exception {
-               for (Cell cell:result.rawCells()){
-                   String key = new String(cell.getQualifier());
-                   String value = new String(cell.getValue());
-                   System.out.println("---wpjlovehome@gmail.com-----key值=" + key + "," + "App.mapRow()");
-                   System.out.println("---wpjlovehome@gmail.com-----value值=" + value + "," + "App.mapRow()");
-               }
+                for (Cell cell : result.rawCells()) {
+                    String key = new String(cell.getQualifier());
+                    String value = new String(cell.getValue());
+                    System.out.println("---wpjlovehome@gmail.com-----key值=" + key + "," + "App.mapRow()");
+                    System.out.println("---wpjlovehome@gmail.com-----value值=" + value + "," + "App.mapRow()");
+                }
                 return null;
             }
         });
+    }
+
+    public static boolean execute(String tableName) {
+//        用于更新操作
+        return hbaseTemplate.execute(tableName, new TableCallback<Boolean>() {
+            public Boolean doInTable(HTableInterface table) throws Throwable {
+                boolean flag = false;
+                try {
+                    Delete delete = new Delete(Bytes.toBytes("11"));
+                    table.delete(delete);
+                    flag = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return flag;
+            }
+        });
+
+    }
+
+    public static void get(String tableName) {
+
+    }
+
+    //分页看看
+    public static void getPageHBaseData(String tableName, String startRow, String endRow, PageHBase pager) {
+        List<Map<String, String>> resultList = new ArrayList<Map<String, String>>();
+        if (pager.getNextPageRowkey() == null) pager.setNextPageRowkey(startRow.toString());
+        Scan scan = pager.getScan(pager.getNextPageRowkey(), endRow.toString());
+        List<Filter> filters = new ArrayList<Filter>();
+
+    }
+
+    /***
+     * 几个过滤器简介
+     * 提取rowkey以01结尾数据
+     * Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new RegexStringComparator(".*01$"));
+     * 提取rowkey以包含201407的数据
+     * Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new SubstringComparator("201407"));
+     * 提取rowkey以123开头的数据
+     * Filter filter = new RowFilter(CompareFilter.CompareOp.EQUAL,new BinaryPrefixComparator("123".getBytes()));
+     */
+    /**
+     *
+     */
+    public static void get() {
+
     }
 }
