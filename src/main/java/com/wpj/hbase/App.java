@@ -2,14 +2,12 @@ package com.wpj.hbase;
 
 
 import com.wpj.hbase.Reponstity.StudentReponsity;
+import com.wpj.hbase.common.RegionTest;
 import com.wpj.hbase.daomain.PageHBase;
 import com.wpj.hbase.daomain.PageModel;
 import com.wpj.hbase.daomain.Student;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.KeyValue;
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -36,9 +34,36 @@ public class App {
     }
 
     public static void main(String[] args) {
-        //test();
-        String TABLE_NAME = "student";
-        String TB_COMPANY = "company";
+       createTable("Stocks");
+       // test();
+//        String TABLE_NAME = "student";
+//        String TB_COMPANY = "company";
+//        String TB_SHARES = "Stock";
+     //   QueryAll("Stock");
+//        try {
+//            Connection connection = ConnectionFactory.createConnection(hbaseTemplate.getConfiguration());
+//            TableName tableName = TableName.valueOf(TB_SHARES);
+//            HBaseAdmin hBaseAdmin=new HBaseAdmin(connection);
+//            Table hTable=connection.getTable(tableName);
+//            Put put = new Put(Bytes.toBytes("30018820150331"));
+//            put.addColumn(Bytes.toBytes("companyName"), null,Bytes.toBytes("美亚柏科"));
+//            put.addColumn(Bytes.toBytes("date"), null, Bytes.toBytes("20150331"));
+//            put.addColumn(Bytes.toBytes("tradingVolume"), null,Bytes.toBytes("9620109"));
+//            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("startPrice"), Bytes.toBytes("42.440"));
+//            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("highestPrice"), Bytes.toBytes("42.440"));
+//            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("overPrice"), Bytes.toBytes("42.440"));
+//            put.addColumn(Bytes.toBytes("money"),Bytes.toBytes("lowestPrice"),Bytes.toBytes("42.440"));
+//            put.addColumn(Bytes.toBytes("money"),Bytes.toBytes("tradingTotalMoney"),Bytes.toBytes("418659200"));
+//            hTable.put(put);
+//            hTable.close();
+//            connection.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+
+        //  get(TABLE_NAME,"ff1b526e-ecf4-491a-8b7a-e201ca300b15");
+        //  test();
 //        boolean res = putOne(new Student(UUID.randomUUID().toString(), "wpj", "泉州市|福州市"), TABLE_NAME);
 //        List<Student> listStudents = new ArrayList<Student>();
 //        for (int i = 111; i < 222; i++) {
@@ -69,6 +94,22 @@ public class App {
         StudentReponsity studentReponsity = new StudentReponsity(hbaseTemplate, "student");
         String res = studentReponsity.get("student", "1", "address", null);
         System.out.println("---wpjlovehome@gmail.com-----res值=" + res + "," + "App.test()");
+    }
+
+    public static void createTable(String tableName) {
+        HTableDescriptor tableDescriptor = new HTableDescriptor(tableName);
+        try {
+            HBaseAdmin admin = new HBaseAdmin(hbaseTemplate.getConfiguration());
+            tableDescriptor.addFamily(new HColumnDescriptor("money"));//族列
+            tableDescriptor.addFamily(new HColumnDescriptor("date"));//族列
+            tableDescriptor.addFamily(new HColumnDescriptor("tradingVolume"));//族列
+            tableDescriptor.addFamily(new HColumnDescriptor("companyName"));//族列
+            RegionTest.createTable(admin,tableDescriptor,RegionTest.getHexSplits("000000","999999",9));
+
+           // admin.createTable(tableDescriptor);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -352,8 +393,33 @@ public class App {
 
     }
 
-    public static void get(String tableName) {
+    /**
+     * 获取单条记录
+     *
+     * @param tableName
+     * @paramrowKey
+     */
+    public static void get(String tableName, String rowKey) {
+        try {
+            HTable hTable = new HTable(config, tableName);
+            Get get = new Get(Bytes.toBytes(rowKey));
+//            get.addColumn("")
+            getResult(hTable.get(get));
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getResult(Result result) {
+        for (Cell cell : result.rawCells()) {
+            String rowKey = toStr(result.getRow());
+            String family = toStr(CellUtil.cloneFamily(cell));
+            String qua = toStr(CellUtil.cloneQualifier(cell));
+            String value = toStr(CellUtil.cloneValue(cell));
+            String row = toStr(CellUtil.cloneRow(cell));
+            System.out.println("[rowkey:" + rowKey + "],[family:" + family + "],[quelifier:" + qua + "],[value:" + value + "],[row:" + row + "]");
+        }
     }
 
     //分页看看
@@ -377,7 +443,5 @@ public class App {
     /**
      *
      */
-    public static void get() {
 
-    }
 }
