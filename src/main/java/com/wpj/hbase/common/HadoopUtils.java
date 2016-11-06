@@ -6,11 +6,6 @@
 
 package com.wpj.hbase.common;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -18,14 +13,19 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.util.LineReader;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 public class HadoopUtils {
 
   private static Configuration conf;
   public  static void initialConf(){
     conf = new Configuration();
-    conf.set("mapred.job.tracker", "192.168.1.111:9001");
-    conf.set("fs.default.name", "192.168.1.111:9000");
-    conf.set("hbase.zookeeper.quorum", "192.168.1.111");
+    conf.set("mapred.job.tracker", "192.168.254.100:9001");
+    conf.set("fs.default.name", "192.168.254.100:9000");
+    conf.set("hbase.zookeeper.quorum", "192.168.254.100");
   }
   public  static void initialConf(String host){
     conf = new Configuration();

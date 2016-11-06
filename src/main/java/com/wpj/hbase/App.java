@@ -28,38 +28,38 @@ public class App {
     static {
         config = HBaseConfiguration.create();
 
-        config.set("hbase.zookeeper.quorum", "192.168.1.111");
+        config.set("hbase.zookeeper.quorum", "192.168.254.100");
         config.set("hbase.zookeeper.property.clientPort", "2181");
         hbaseTemplate = new HbaseTemplate(config);
     }
 
     public static void main(String[] args) {
-       createTable("Stocks");
+   //    createTable("Stocks");
        // test();
 //        String TABLE_NAME = "student";
 //        String TB_COMPANY = "company";
-//        String TB_SHARES = "Stock";
+       String TB_SHARES = "Stocks";
      //   QueryAll("Stock");
-//        try {
-//            Connection connection = ConnectionFactory.createConnection(hbaseTemplate.getConfiguration());
-//            TableName tableName = TableName.valueOf(TB_SHARES);
-//            HBaseAdmin hBaseAdmin=new HBaseAdmin(connection);
-//            Table hTable=connection.getTable(tableName);
-//            Put put = new Put(Bytes.toBytes("30018820150331"));
-//            put.addColumn(Bytes.toBytes("companyName"), null,Bytes.toBytes("美亚柏科"));
-//            put.addColumn(Bytes.toBytes("date"), null, Bytes.toBytes("20150331"));
-//            put.addColumn(Bytes.toBytes("tradingVolume"), null,Bytes.toBytes("9620109"));
-//            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("startPrice"), Bytes.toBytes("42.440"));
-//            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("highestPrice"), Bytes.toBytes("42.440"));
-//            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("overPrice"), Bytes.toBytes("42.440"));
-//            put.addColumn(Bytes.toBytes("money"),Bytes.toBytes("lowestPrice"),Bytes.toBytes("42.440"));
-//            put.addColumn(Bytes.toBytes("money"),Bytes.toBytes("tradingTotalMoney"),Bytes.toBytes("418659200"));
-//            hTable.put(put);
-//            hTable.close();
-//            connection.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Connection connection = ConnectionFactory.createConnection(hbaseTemplate.getConfiguration());
+            TableName tableName = TableName.valueOf(TB_SHARES);
+            HBaseAdmin hBaseAdmin=new HBaseAdmin(connection);
+            Table hTable=connection.getTable(tableName);
+            Put put = new Put(Bytes.toBytes("30018820150331"));
+            put.addColumn(Bytes.toBytes("companyName"), null,Bytes.toBytes("美亚柏科"));
+            put.addColumn(Bytes.toBytes("date"), null, Bytes.toBytes("20150331"));
+            put.addColumn(Bytes.toBytes("tradingVolume"), null,Bytes.toBytes("9620109"));
+            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("startPrice"), Bytes.toBytes("42.440"));
+            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("highestPrice"), Bytes.toBytes("42.440"));
+            put.addColumn(Bytes.toBytes("money"), Bytes.toBytes("overPrice"), Bytes.toBytes("42.440"));
+            put.addColumn(Bytes.toBytes("money"),Bytes.toBytes("lowestPrice"),Bytes.toBytes("42.440"));
+            put.addColumn(Bytes.toBytes("money"),Bytes.toBytes("tradingTotalMoney"),Bytes.toBytes("418659200"));
+            hTable.put(put);
+            hTable.close();
+            connection.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         //  get(TABLE_NAME,"ff1b526e-ecf4-491a-8b7a-e201ca300b15");

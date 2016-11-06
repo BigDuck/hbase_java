@@ -27,7 +27,7 @@ public class RegionTest {
     public static boolean createTable(HBaseAdmin admin, HTableDescriptor table, byte[][] splits)
             throws IOException {
         try {
-            admin.createTable(table, splits );
+            admin.createTable(table, splits);
             return true;
         } catch (TableExistsException e) {
             logger.info("table " + table.getNameAsString() + " already exists");
